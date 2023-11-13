@@ -7,9 +7,9 @@ import { userLoader } from './loaders'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route>
-    <Route path="/" element={<Home />} />,
-    <Route path="/dashboard" loader={userLoader} element={<Dashboard />} />,
-    <Route path="/game" loader={userLoader} element={<Game />} />,
+    <Route path="/ProtoPit/" element={<Home />} />,
+    <Route path="/ProtoPit/dashboard" loader={userLoader} element={<Dashboard />} />,
+    <Route path="/ProtoPit/game" loader={userLoader} element={<Game />} />,
   </Route>
 ))
 
