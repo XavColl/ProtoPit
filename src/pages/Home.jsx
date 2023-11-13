@@ -30,7 +30,7 @@ export default function Home() {
   }, [])
 
   if(navigate){
-    return <Navigate to={'/dashboard'} />
+    return <Navigate to={'/ProtoPit/dashboard'} />
   }
 
   return (

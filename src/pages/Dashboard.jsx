@@ -15,11 +15,11 @@ export default function Dashboard() {
   })
 
   if(!data.player){
-    return <Navigate to='/' />
+    return <Navigate to='/ProtoPit' />
   }
 
   if(nav){
-    return <Navigate to='/game' />
+    return <Navigate to='/ProtoPit/game' />
   }
   return (
     <>

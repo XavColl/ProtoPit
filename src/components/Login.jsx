@@ -14,7 +14,7 @@ export default function Login() {
     }
 
     if(navigate){
-        return <Navigate to='/dashboard' />
+        return <Navigate to='/ProtoPit/dashboard' />
     }
 
 

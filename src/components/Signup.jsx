@@ -19,7 +19,7 @@ export default function Signup() {
     }
 
     if(navigate){
-      return <Navigate to='/dashboard' />
+      return <Navigate to='/ProtoPit/dashboard' />
     }
 
 
