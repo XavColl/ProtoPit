@@ -53,11 +53,11 @@ export default function Game() {
     })
 
     if(win){
-        return <><h1>YOU WIN</h1><Link to={'/dashboard'} >Play Again</Link></>
+        return <><h1>YOU WIN</h1><Link to={'/ProtoPit/dashboard'} >Play Again</Link></>
     }
 
     if(lose){
-        return <><h1>YOU LOSE</h1><Link to={'/dashboard'} >Play Again</Link></>
+        return <><h1>YOU LOSE</h1><Link to={'/ProtoPit/dashboard'} >Play Again</Link></>
     }
 
     if (!game?.board) return <p>Loading ...</p>
