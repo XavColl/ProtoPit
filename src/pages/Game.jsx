@@ -10,7 +10,7 @@ export default function Game() {
     const [isGoing, setIsGoing] = useState(false)
     const [win, setWin] = useState(false)
     const [lose, setLose] = useState(false)
-    const [bunker, setBunker] = useState(false)
+    const [bunker, setBunker] = useState([])
     const data = useLoaderData()
 
     const user = localStorage.getItem('sptuser')
@@ -47,9 +47,7 @@ export default function Game() {
 
     socket.on('update game', gm => {
         setGame(gm)
-        gm.bunker.forEach((b, i) => {
-            if(gm.players[i%gm.players.length] === user) setBunker(b)
-        })
+        setBunker(gm.bunker)
     })
 
     if(win){

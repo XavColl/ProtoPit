@@ -45,6 +45,7 @@
     background-color: rgb(0, 0, 0);
     border-radius: 3px;
     position: relative;
+    overflow: hidden;
 }
 .Player{
     flex: 1;

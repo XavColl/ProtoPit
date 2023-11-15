@@ -115,9 +115,27 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
         socket.emit('intracable', data)
     }
 
+    const moveBunker = (data) => {
+        socket.emit('move bunker', data)
+    }
+
     const breche = (data) => {
         socket.emit('breche', data)
     }
+
+    const isBunker = (cll) => {
+        if(bunker.length === 0) return false
+        if(bunker.find(b => b.x === cll.x && b.y === cll.y)) return true
+        return false
+    }
+
+    if(isBunker(cell)){
+        return (
+            <div className="Bunker"></div>
+        )
+    }
+
+    
 
     if(cell.invisible?.length>10 && cell.invisible !== user){
         console.log('wesh')
@@ -143,6 +161,11 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
         return <div className={clName} onClick={() => transparence({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
     }
 
+    if(game.state === 'bunker' && game.players[game.turn%game.players.length] === user && isMovable(cell)){
+        const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : cell.type === 'sealed' ? 'Wall' : 'Enemy'
+        return <div className={clName} onClick={() => moveBunker({x: cell.x, y: cell.y, user})}><div className="Bonusable"></div></div>
+    }
+
     const isGlobetrottable = (cell) => {
         let position = game.turnPieces[game.turn]
         if(position.x === 0){
@@ -165,13 +188,7 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
 
     
 
-    if(bunker && cell.player === user){
-        return (
-            <div className="Bunker"></div>
-        )
-    }
-
-    if(cell.bomb === true){
+    if(cell.bomb){
         if(bunker && cell.player === user){
             return (
                 <div className="Bunker"><div className="Bomb"></div></div>
@@ -208,7 +225,7 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
         return <div className={clName} onClick={() => globeMove(cell, false)}><div className="Bonusable"></div></div>
     }
 
-    if(cell.type === 'special' && game.tp){
+    if(cell.type === 'special' && game.tp && game.players[game.turn%game.players.length] === user){
         return (
             <div onClick={() => socket.emit('tp', {x: cell.x, y: cell.y, user})}  className="Special">
             </div>
