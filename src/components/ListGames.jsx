@@ -21,7 +21,7 @@ export default function ListGames() {
 
 
   return (
-    <section>
+    <section className="ListGames">
         <h2>List Games</h2>
         {games.map((game, i) => {if(gameChosen === game) return <button key={i} disabled>{game}</button>
             return <button key={i} onClick={() => handleClick({game, user})}>{game}</button>

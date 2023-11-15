@@ -1,3 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+.Dashboard{
+    background: rgba(0, 34, 255, 0.2);
+    padding: 0 50px;
+    height: 100vh;
+}
+
+.GameChoices{
+    border: 3px solid black;
+    line-height: 2em;
+    width: 350px;
+    padding: 20px;
+    margin: 0 20px;
+    border-radius: 10px;
+}
+
+.Bonuses{
+    border: 3px solid black;
+    line-height: 2em;
+    width: 350px;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 10px;
+
+}
+
+.ListGames{
+    border: 3px solid black;
+    line-height: 2em;
+    width: 350px;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 10px;
+}
+
+button{
+    font-size: 1.1em;
+}
+input{
+    font-size: 1.1em;
+}
+select{
+    font-size: 1.1em;
+}
+p{
+    font-size: 1.1em;
+}
+.Game{
+    height: 100vh;
+    background: rgba(0, 34, 255, 0.2);
+}
+
 .Board{
     display: flex;
     flex-direction: column;

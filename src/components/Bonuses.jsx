@@ -13,8 +13,8 @@ export default function Bonuses() {
 
 
   return (
-    <form>
-        <label htmlFor="firstBonus">Bonuses : </label>
+    <form className="Bonuses">
+        <h2>Bonuses : </h2><br/>
         <select value={firstBonus} onChange={ e => setFirstBonus(e.target.value) }>
             <option value="teleportation">Téléportation</option>
             <option value="globe">Globe-Trotteur</option>
@@ -42,7 +42,7 @@ export default function Bonuses() {
             <option value="breche">Brèche</option>
             <option value="exil">Exil</option>
             <option value="escale">Escale</option>
-        </select>
+        </select><br/>
         <button type='submit' onClick={e => handleClick(e)}>set Bonuses</button>
     </form>
   )

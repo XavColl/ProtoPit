@@ -22,11 +22,10 @@ export default function Dashboard() {
     return <Navigate to='/ProtoPit/game' />
   }
   return (
-    <>
-      <h2>Create Game : </h2>
+    <div className="Dashboard">
       <GameChoices />
       <Bonuses />
       <ListGames />
-    </>
+    </div>
   )
 }

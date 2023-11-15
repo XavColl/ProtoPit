@@ -60,7 +60,7 @@ export default function Game() {
 
     if (!game?.board) return <p>Loading ...</p>
 
-    return <>
+    return <div className="Game">
         <Board game={game} place={place} isGoing={isGoing} bunker={bunker} />
         {(game.players[game.turn%game.players.length] === user 
             && game.bonus !== 'no' 
@@ -70,5 +70,5 @@ export default function Game() {
                 <button onClick={() => {activeBonus(data.player.bonus[0])}} >{data.player.bonus[0]}</button>
                 <button onClick={() => {activeBonus(data.player.bonus[1])}} >{data.player.bonus[1]}</button>
             </> : <></> }
-    </>
+    </div>
 }
