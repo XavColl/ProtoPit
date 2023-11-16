@@ -23,6 +23,7 @@ export default function Dashboard() {
   }
   return (
     <div className="Dashboard">
+      <h1 className="title">WallPit</h1>
       <GameChoices />
       <Bonuses />
       <ListGames />

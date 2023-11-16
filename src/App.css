@@ -5,53 +5,72 @@
     padding: 0;
     font-family: 'Josefin Sans', sans-serif;
 }
-
+h1{
+    font-size: 2em;
+}
+h2{
+    font-size: 1.5em;
+}
+.title{
+    line-height: 3em;
+    text-align: center;
+}
 .Dashboard{
-    background: rgba(0, 34, 255, 0.2);
-    padding: 0 50px;
+    padding: 0 20px;
     height: 100vh;
 }
 
 .GameChoices{
+    flex-direction: column;
+    display : flex;
+    align-items: center;
     border: 3px solid black;
-    line-height: 2em;
-    width: 350px;
-    padding: 20px;
-    margin: 0 20px;
+    width: 100%;
+    padding: 10px 0;
     border-radius: 10px;
 }
 
 .Bonuses{
+    flex-direction: column;
+    display : flex;
+    align-items: center;
     border: 3px solid black;
     line-height: 2em;
-    width: 350px;
-    padding: 20px;
-    margin: 20px;
+    width: 100%;
+    padding: 10px 0;
+    margin: 10px 0;
     border-radius: 10px;
 
-}
-
-.ListGames{
-    border: 3px solid black;
-    line-height: 2em;
-    width: 350px;
-    padding: 20px;
-    margin: 20px;
-    border-radius: 10px;
 }
 
 button{
+    width : 200px;
+    height: 30px;
     font-size: 1.1em;
 }
-input{
-    font-size: 1.1em;
+
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+
+.ListGames{
+    flex-direction: column;
+    display : flex;
+    align-items: center;
+    border: 3px solid black;
+    line-height: 2em;
+    width: 100%;
+    padding: 10px 0;
+    margin: 10px 0;
+    border-radius: 10px;
+}
+
 select{
-    font-size: 1.1em;
+    width: 200px;
 }
-p{
-    font-size: 1.1em;
-}
+
 .Game{
     height: 100vh;
     background: rgba(0, 34, 255, 0.2);

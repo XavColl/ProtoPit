@@ -129,43 +129,6 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
         return false
     }
 
-    if(isBunker(cell)){
-        return (
-            <div className="Bunker"></div>
-        )
-    }
-
-    
-
-    if(cell.invisible?.length>10 && cell.invisible !== user){
-        console.log('wesh')
-        return (
-            <div className="Cell"></div>
-        )
-    }
-
-    if(game.state === 'breche' && isRenovable(cell)){
-        return <div className='Wall' onClick={() => breche({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
-}
-
-    if(game.state === 'intracable' && game.players[game.turn%game.players.length] === user && isMovable(cell)){
-        const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : cell.type === 'sealed' ? 'Wall' : 'Enemy'
-        return <div className={clName} onClick={() => intracable({x: cell.x, y: cell.y, user})}><div className="Bonusable"></div></div>
-    }
-
-    if(game.state === 'transparence' && (isRenovable(cell) || isMovable(cell))){
-        const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : cell.type === 'sealed' ? 'Wall' : 'Enemy'
-        if(game.state === 'globe'){
-            return <div className={clName} onClick={() => globeMove(cell, false)}><div className="Bonusable"></div></div>
-        }
-        return <div className={clName} onClick={() => transparence({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
-    }
-
-    if(game.state === 'bunker' && game.players[game.turn%game.players.length] === user && isMovable(cell)){
-        const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : cell.type === 'sealed' ? 'Wall' : 'Enemy'
-        return <div className={clName} onClick={() => moveBunker({x: cell.x, y: cell.y, user})}><div className="Bonusable"></div></div>
-    }
-
     const isGlobetrottable = (cell) => {
         let position = game.turnPieces[game.turn]
         if(position.x === 0){
@@ -186,130 +149,381 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
         return false
     }
 
-    
 
-    if(cell.bomb){
-        if(bunker && cell.player === user){
+
+
+
+
+
+
+    const displayCell = () => {
+        let clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : cell.player !== null ? 'Enemy' : cell.type === 'sealed' ? 'Wall' : '' 
+        let bomb = false;
+        let orb = false;
+        
+        if(isBunker(cell)){
+            clName = 'Bunker'
+        }
+        if(cell.bomb){
+            bomb = true;
+        }
+        if(cell.type === 'orb'){
+            clName = 'Cell';
+            orb = true;
+        }
+
+        if(place && isPlaceable(cell)){
+                return <div className='Cell' onClick={() => placePlayer()}><div className="Playable"></div></div>
+            }
+
+        if(game.tp && cell.type === 'special' && game.players[game.turn%game.players.length] === user){
             return (
-                <div className="Bunker"><div className="Bomb"></div></div>
+                <div onClick={() => socket.emit('tp', {x: cell.x, y: cell.y, user})}  className="Special">
+                </div>
             )
         }
-        const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : cell.type === 'sealed' ? 'Wall' : 'Enemy'
-        if(isMovable(cell) && !game.tp && game.state === 'normal'){
-            return <div className={clName} onClick={() => move(isMovable(cell).direction)}><div className="Playable"><div className="Bomb"></div></div></div>
+        if(cell.invisible?.length>10 && cell.invisible !== user){
+            if(clName !== 'Cell'){
+                return (
+                    <div className="Cell"></div>
+                )
+            }
+            if(isMovable(cell) && !game.tp && cell.type==='orb'){
+                return <div className='Cell' onClick={() => getOrb(isMovable(cell).direction)}><div className="Playable"><div className="Orb"></div></div></div>
+            }
+            if(isMovable(cell) && !game.tp){
+                return <div className='Cell' onClick={() => move(isMovable(cell).direction)}><div className="Playable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
+            }
+            return (
+                <div className="Cell"></div>
+            )
+                
         }
-        if(game.state === 'globe' && (isGlobetrottable(cell) || isMovable(cell))){
-            return <div className={clName} onClick={() => globeMove(cell, false)}><div className="Bonusable"><div className="Bomb"></div></div></div>
+        switch(game.state){
+            case 'normal':
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if(isMovable(cell) && !game.tp && cell.type==='orb'){
+                    return <div className={clName} onClick={() => getOrb(isMovable(cell).direction)}><div className="Playable"><div className="Orb"></div></div></div>
+                }
+                if(isMovable(cell) && !game.tp){
+                    return <div className={clName} onClick={() => move(isMovable(cell).direction)}><div className="Playable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
+                )
+            case 'breche':
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if(isRenovable(cell)){
+                    return <div className='Wall' onClick={() => breche({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
+                )
+            case 'chantier':
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if(game.players[game.turn%game.players.length] === user && isMovable(cell)){
+                    return <div className={clName} onClick={() => chantier({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
+                )
+            case 'renovation':
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if(isRenovable(cell)){
+                    return <div className='Wall' onClick={() => renovation({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
+                )
+            case 'invisible':
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if(game.players[game.turn%game.players.length] === user && isMovable(cell) && cell.type === 'empty'){
+                    return <div className='Cell' onClick={() => invisibleMove(isMovable(cell).direction)}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
+                )
+            case 'transparence':
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if((isRenovable(cell) || isMovable(cell))){
+                    return <div className={clName} onClick={() => transparence({x: cell.x, y:cell.y, user})}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
+                )
+            case 'intracable':
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if(game.players[game.turn%game.players.length] === user && isMovable(cell)){
+                    return <div className={clName} onClick={() => intracable({x: cell.x, y: cell.y, user})}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
+                )
+            case 'bunker':
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if(game.players[game.turn%game.players.length] === user && isMovable(cell)){
+                    return <div className={clName} onClick={() => moveBunker({x: cell.x, y: cell.y, user})}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
+                )
+            case 'globe':
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if(cell.bunker && cell.player !== user){
+                    return <div className="Bunker"></div>
+                }
+                if((isGlobetrottable(cell) || isMovable(cell))){
+                    return <div className={clName} onClick={() => globeMove(cell, false)}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: orb? <div className="Orb" ></div> : <></>}</div>
+                )
+            case 'destroy teleport':
+                if(cell.type === 'special'){
+                    return(
+                        <div onClick={() => socket.emit('destroy teleport', {x: cell.x, y: cell.y, user})} className="Destroy">
+                        </div>
+                    )
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: <></>}</div>
+                )
+            case 'teleportation':
+                if(cell.type === 'special'){
+                    return(
+                        <div onClick={() => socket.emit('teleportation', {x: cell.x, y: cell.y, user})} className="Special">
+                        </div>
+                    )
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: <></>}</div>
+                )
+            case 'bomb':
+                if(cell.type === 'empty'){
+                    return(
+                        <div onClick={() => socket.emit('bomb', {x: cell.x, y: cell.y, user})} className="Cell">
+                        </div>
+                    )
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: <></>}</div>
+                )
+            default:
+                break;
+            
         }
-        else return <div className={clName}><div className="Bomb"></div></div>
+            
     }
 
 
-    if(game.state === 'renovation' && isRenovable(cell)){
-        return <div className='Wall' onClick={() => renovation({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
-    }
 
-    if(game.state === 'chantier' && cell.type === 'empty' && isMovable(cell)){
-        return <div className='Cell' onClick={() => chantier({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
-    }
 
-    if(game.state === 'invisible' && game.players[game.turn%game.players.length] === user && isMovable(cell) && cell.type === 'empty'){
-        return <div className='Cell' onClick={() => invisibleMove(isMovable(cell).direction)}><div className="Bonusable"></div></div>
-    }
 
-    if(game.state === 'globe' && (isGlobetrottable(cell) || isMovable(cell))){
-        if(cell.type === 'orb'){
-            return <div className='Cell' onClick={() => globeMove(cell, true)}><div className="Orb"></div><div className="Bonusable"></div></div>
-        }
-        const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : 'Enemy'
-        return <div className={clName} onClick={() => globeMove(cell, false)}><div className="Bonusable"></div></div>
-    }
 
-    if(cell.type === 'special' && game.tp && game.players[game.turn%game.players.length] === user){
-        return (
-            <div onClick={() => socket.emit('tp', {x: cell.x, y: cell.y, user})}  className="Special">
-            </div>
-        )
-    }
 
-    if(game.state === 'destroy teleport' && game.players[game.turn%game.players.length] === user && cell.type === 'special'){
-        return(
-            <div onClick={() => socket.emit('destroy teleport', {x: cell.x, y: cell.y, user})} className="Destroy">
 
-            </div>
-        )
-    }
 
-    if(game.state === 'teleportation' && cell.type === 'special' && game.players[game.turn%game.players.length] === user ){
-        return(
-            <div onClick={() => socket.emit('teleportation', {x: cell.x, y: cell.y, user})} className="Special">
 
-            </div>
-        )
-    }
 
-    if(game.state === 'bomb' && cell.type === 'empty' && game.players[game.turn%game.players.length] === user){
-        return(
-            <div onClick={() => socket.emit('bomb', {x: cell.x, y: cell.y, user})} className="Cell">
 
-            </div>
-        )
-    }
+
+
+
+    // if(isBunker(cell)){
+    //     return (
+    //         <div className="Bunker"></div>
+    //     )
+    // }
+
+    
+
+//     if(cell.invisible?.length>10 && cell.invisible !== user){
+//         console.log('wesh')
+//         return (
+//             <div className="Cell"></div>
+//         )
+//     }
+
+//     if(game.state === 'breche' && isRenovable(cell)){
+//         return <div className='Wall' onClick={() => breche({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
+// }
+
+//     if(game.state === 'intracable' && game.players[game.turn%game.players.length] === user && isMovable(cell)){
+//         const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : cell.type === 'sealed' ? 'Wall' : 'Enemy'
+//         return <div className={clName} onClick={() => intracable({x: cell.x, y: cell.y, user})}><div className="Bonusable"></div></div>
+//     }
+
+//     if(game.state === 'transparence' && (isRenovable(cell) || isMovable(cell))){
+//         const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : cell.type === 'sealed' ? 'Wall' : 'Enemy'
+//         if(game.state === 'globe'){
+//             return <div className={clName} onClick={() => globeMove(cell, false)}><div className="Bonusable"></div></div>
+//         }
+//         return <div className={clName} onClick={() => transparence({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
+//     }
+
+//     if(game.state === 'bunker' && game.players[game.turn%game.players.length] === user && isMovable(cell)){
+//         const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : cell.type === 'sealed' ? 'Wall' : 'Enemy'
+//         return <div className={clName} onClick={() => moveBunker({x: cell.x, y: cell.y, user})}><div className="Bonusable"></div></div>
+//     }
+
+    
+
+    
+
+//     if(cell.bomb){
+//         if(bunker && cell.player === user){
+//             return (
+//                 <div className="Bunker"><div className="Bomb"></div></div>
+//             )
+//         }
+//         const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : cell.type === 'sealed' ? 'Wall' : 'Enemy'
+//         if(isMovable(cell) && !game.tp && game.state === 'normal'){
+//             return <div className={clName} onClick={() => move(isMovable(cell).direction)}><div className="Playable"><div className="Bomb"></div></div></div>
+//         }
+//         if(game.state === 'globe' && (isGlobetrottable(cell) || isMovable(cell))){
+//             return <div className={clName} onClick={() => globeMove(cell, false)}><div className="Bonusable"><div className="Bomb"></div></div></div>
+//         }
+//         else return <div className={clName}><div className="Bomb"></div></div>
+//     }
+
+
+//     if(game.state === 'renovation' && isRenovable(cell)){
+//         return <div className='Wall' onClick={() => renovation({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
+//     }
+
+//     if(game.state === 'chantier' && cell.type === 'empty' && isMovable(cell)){
+//         return <div className='Cell' onClick={() => chantier({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
+//     }
+
+//     if(game.state === 'invisible' && game.players[game.turn%game.players.length] === user && isMovable(cell) && cell.type === 'empty'){
+//         return <div className='Cell' onClick={() => invisibleMove(isMovable(cell).direction)}><div className="Bonusable"></div></div>
+//     }
+
+//     if(game.state === 'globe' && (isGlobetrottable(cell) || isMovable(cell))){
+//         if(cell.type === 'orb'){
+//             return <div className='Cell' onClick={() => globeMove(cell, true)}><div className="Orb"></div><div className="Bonusable"></div></div>
+//         }
+//         const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : 'Enemy'
+//         return <div className={clName} onClick={() => globeMove(cell, false)}><div className="Bonusable"></div></div>
+//     }
+
+//     if(cell.type === 'special' && game.tp && game.players[game.turn%game.players.length] === user){
+//         return (
+//             <div onClick={() => socket.emit('tp', {x: cell.x, y: cell.y, user})}  className="Special">
+//             </div>
+//         )
+//     }
+
+//     if(game.state === 'destroy teleport' && game.players[game.turn%game.players.length] === user && cell.type === 'special'){
+//         return(
+//             <div onClick={() => socket.emit('destroy teleport', {x: cell.x, y: cell.y, user})} className="Destroy">
+
+//             </div>
+//         )
+//     }
+
+//     if(game.state === 'teleportation' && cell.type === 'special' && game.players[game.turn%game.players.length] === user ){
+//         return(
+//             <div onClick={() => socket.emit('teleportation', {x: cell.x, y: cell.y, user})} className="Special">
+
+//             </div>
+//         )
+//     }
+
+//     if(game.state === 'bomb' && cell.type === 'empty' && game.players[game.turn%game.players.length] === user){
+//         return(
+//             <div onClick={() => socket.emit('bomb', {x: cell.x, y: cell.y, user})} className="Cell">
+
+//             </div>
+//         )
+//     }
 
     
 
 
-    if(isMovable(cell) && !game.tp && game.state === 'normal'){
-        if(cell.type === 'orb'){
-            return <div className='Cell' onClick={() => getOrb(isMovable(cell).direction)}><div className="Orb"></div><div className="Playable"></div></div>
-        }
-        const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : 'Enemy'
-        return <div className={clName} onClick={() => move(isMovable(cell).direction)}><div className="Playable"></div></div>
-    }
+//     if(isMovable(cell) && !game.tp && game.state === 'normal'){
+//         if(cell.type === 'orb'){
+//             return <div className='Cell' onClick={() => getOrb(isMovable(cell).direction)}><div className="Orb"></div><div className="Playable"></div></div>
+//         }
+//         const clName = cell.type === 'empty' ? 'Cell' : cell.type === 'special' ? 'Tp' : cell.player === user ? 'Player' : 'Enemy'
+//         return <div className={clName} onClick={() => move(isMovable(cell).direction)}><div className="Playable"></div></div>
+//     }
 
-    if(place && isPlaceable(cell)){
-        return <div className='Cell' onClick={() => placePlayer()}><div className="Playable"></div></div>
-    }
-
-
-
-    if(cell.type === 'orb'){
-        return <div className="Cell"><div className="Orb"></div></div>
-    }
-
-    if(cell.type === 'player' && cell.player !== user){
-        return (
-            <div className="Enemy">
-            </div>
-        )
-    }
-
-    if(cell.type === 'player' && cell.player === user){
-        return (
-            <div className="Player">
-            </div>
-        )
-    }
-
-    if(cell.type === 'sealed'){
-        return (
-            <div className="Wall">
-            </div>
-        )
-    }
-
-    if(cell.type === 'special'){
-        return (
-            <div className="Tp">
-            </div>
-        )
-    }
+//     if(place && isPlaceable(cell)){
+//         return <div className='Cell' onClick={() => placePlayer()}><div className="Playable"></div></div>
+//     }
 
 
-    return (
-        <div className="Cell">
-        </div>
-    )
+
+//     if(cell.type === 'orb'){
+//         return <div className="Cell"><div className="Orb"></div></div>
+//     }
+
+//     if(cell.type === 'player' && cell.player !== user){
+//         return (
+//             <div className="Enemy">
+//             </div>
+//         )
+//     }
+
+//     if(cell.type === 'player' && cell.player === user){
+//         return (
+//             <div className="Player">
+//             </div>
+//         )
+//     }
+
+//     if(cell.type === 'sealed'){
+//         return (
+//             <div className="Wall">
+//             </div>
+//         )
+//     }
+
+//     if(cell.type === 'special'){
+//         return (
+//             <div className="Tp">
+//             </div>
+//         )
+//     }
+
+
+//     return (
+//         <div className="Cell">
+//         </div>
+//     )
+
+return displayCell()
 }
 
     

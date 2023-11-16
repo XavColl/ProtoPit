@@ -21,7 +21,7 @@ export default function GameChoices() {
     <div className='GameChoices'>
       <h2 className="titleDash">Create Game : </h2>
       <form>
-        <label htmlFor='bonus'>Bonus</label>
+        <label htmlFor='bonus'>Bonus</label><br />
         <select name='bonus' id='bonus' value={bonus} onChange={ e => setBonus(e.target.value) }>
           {/* 
             start : 2 powers, all orbs from the start
@@ -33,13 +33,13 @@ export default function GameChoices() {
           <option value='no'>No</option>
         </select>
         <br />
-        <label htmlFor='pieces'>Pieces Each</label>
+        <label htmlFor='pieces'>Pieces Each</label><br />
         <select name='pieces each' id='pieces' value={pieces} onChange={ e => setPieces(e.target.value) }>
           <option value={1}>1</option>
           <option value={2}>2</option>
         </select>
         <br />
-        <label htmlFor='squares'>Squares</label>
+        <label htmlFor='squares'>Squares</label><br />
         <select name='squares' id='squares' value={squares} onChange={e => setSquares(e.target.value)}>
           <option value={10}>10</option>
           <option value={11}>11</option>
@@ -54,7 +54,7 @@ export default function GameChoices() {
           <option value={20}>20</option>
         </select>
         <br />
-        <label htmlFor="players">Players</label>
+        <label htmlFor="players">Players</label><br />
         <select name='players' id='players' value={players} onChange={e => setPlayers(e.target.value)}>
           <option value={2}>2</option>
           <option value={3}>3</option>
