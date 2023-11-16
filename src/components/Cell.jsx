@@ -199,6 +199,11 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
             )
                 
         }
+        if(isBunker(cell)){
+            return (
+                <div className="Bunker"></div>
+            )
+        }
         switch(game.state){
             case 'normal':
                 if(cell.bunker && cell.player !== user){
@@ -214,9 +219,7 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
                     <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
                 )
             case 'breche':
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
+                
                 if(isRenovable(cell)){
                     return <div className='Wall' onClick={() => breche({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
                 }
@@ -224,9 +227,7 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
                     <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
                 )
             case 'chantier':
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
+                
                 if(game.players[game.turn%game.players.length] === user && isMovable(cell)){
                     return <div className={clName} onClick={() => chantier({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
                 }
@@ -234,9 +235,7 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
                     <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
                 )
             case 'renovation':
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
+                
                 if(isRenovable(cell)){
                     return <div className='Wall' onClick={() => renovation({x: cell.x, y:cell.y, user})}><div className="Bonusable"></div></div>
                 }
@@ -244,12 +243,7 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
                     <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
                 )
             case 'invisible':
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
+                
                 if(game.players[game.turn%game.players.length] === user && isMovable(cell) && cell.type === 'empty'){
                     return <div className='Cell' onClick={() => invisibleMove(isMovable(cell).direction)}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
                 }
@@ -257,52 +251,32 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
                     <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
                 )
             case 'transparence':
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
-                if((isRenovable(cell) || isMovable(cell))){
+                
+                if((isRenovable(cell) || isMovable(cell)) && !game.tp){
                     return <div className={clName} onClick={() => transparence({x: cell.x, y:cell.y, user})}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
                 }
                 return(
                     <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
                 )
             case 'intracable':
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
-                if(game.players[game.turn%game.players.length] === user && isMovable(cell)){
+                
+                if(game.players[game.turn%game.players.length] === user && isMovable(cell) && !game.tp){
                     return <div className={clName} onClick={() => intracable({x: cell.x, y: cell.y, user})}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
                 }
                 return(
                     <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
                 )
             case 'bunker':
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
-                if(game.players[game.turn%game.players.length] === user && isMovable(cell)){
+                
+                if(game.players[game.turn%game.players.length] === user && isMovable(cell) && !game.tp){
                     return <div className={clName} onClick={() => moveBunker({x: cell.x, y: cell.y, user})}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
                 }
                 return(
                     <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
                 )
             case 'globe':
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
-                if((isGlobetrottable(cell) || isMovable(cell))){
+                
+                if((isGlobetrottable(cell) || isMovable(cell)) && !game.tp){
                     return <div className={clName} onClick={() => globeMove(cell, false)}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
                 }
                 return(
