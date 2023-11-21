@@ -183,6 +183,9 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
             )
         }
         if(cell.invisible?.length>10 && cell.invisible !== user){
+            if(cell.type === 'player' && isMovable(cell)){
+                return <div className='Cell' onClick={() => move(isMovable(cell).direction)}><div className="Playable"></div></div>
+            }
             if(clName !== 'Cell'){
                 return (
                     <div className="Cell"></div>
@@ -206,9 +209,6 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
         }
         switch(game.state){
             case 'normal':
-                if(cell.bunker && cell.player !== user){
-                    return <div className="Bunker"></div>
-                }
                 if(isMovable(cell) && !game.tp && cell.type==='orb'){
                     return <div className={clName} onClick={() => getOrb(isMovable(cell).direction)}><div className="Playable"><div className="Orb"></div></div></div>
                 }
@@ -244,7 +244,7 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
                 )
             case 'invisible':
                 
-                if(game.players[game.turn%game.players.length] === user && isMovable(cell) && cell.type === 'empty'){
+                if(game.players[game.turn%game.players.length] === user && isMovable(cell) && (cell.type === 'empty' || cell.type === 'orb')){
                     return <div className='Cell' onClick={() => invisibleMove(isMovable(cell).direction)}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
                 }
                 return(
@@ -283,7 +283,7 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
                     <div className={clName}>{bomb? <div className="Bomb"></div >: orb? <div className="Orb" ></div> : <></>}</div>
                 )
             case 'destroy teleport':
-                if(cell.type === 'special'){
+                if(cell.type === 'special' && game.players[game.turn%game.players.length] === user){
                     return(
                         <div onClick={() => socket.emit('destroy teleport', {x: cell.x, y: cell.y, user})} className="Destroy">
                         </div>

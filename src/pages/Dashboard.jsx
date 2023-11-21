@@ -4,6 +4,7 @@ import Bonuses from "../components/Bonuses";
 import GameChoices from "../components/GameChoices";
 import ListGames from "../components/ListGames";
 import { useState } from "react";
+import Computer from "../components/Computer";
 
 export default function Dashboard() {
 
@@ -27,6 +28,7 @@ export default function Dashboard() {
       <GameChoices />
       <Bonuses />
       <ListGames />
+      <Computer />
     </div>
   )
 }
