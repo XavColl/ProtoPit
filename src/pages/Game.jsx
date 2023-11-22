@@ -62,13 +62,18 @@ export default function Game() {
 
     return <div className="Game">
         <Board game={game} place={place} isGoing={isGoing} bunker={bunker} />
-        {(game.players[game.turn%game.players.length] === user 
+        {
+            (game.players[game.turn%game.players.length] === user 
             && game.bonus !== 'no' 
             && game.active[game.turn%game.players.length] > 0  
-            && game.active[game.turn%game.players.length] < 4) ?
+            && game.active[game.turn%game.players.length] < 4
+            && game.state != 'clonage' ) ? 
             <> 
                 <button onClick={() => {activeBonus(data.player.bonus[0])}} >{data.player.bonus[0]}</button>
                 <button onClick={() => {activeBonus(data.player.bonus[1])}} >{data.player.bonus[1]}</button>
-            </> : <></> }
+            </> :
+            game.state === 'clonage' ? <><button onClick={() => {activeBonus(game.clonage)}} >{game.clonage}</button></> :
+            <></> 
+        }
     </div>
 }

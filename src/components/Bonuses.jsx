@@ -28,6 +28,8 @@ export default function Bonuses() {
             <option value="breche">Brèche</option>
             <option value="exil">Exil</option>
             <option value="escale">Escale</option>
+            <option value="clonage">Clônage</option>
+            <option value="illusion">Illusion</option>
         </select>
         <select value={secondBonus} onChange={ e => setSecondBonus(e.target.value) }>
         <option value="teleportation">Téléportation</option>
@@ -42,6 +44,8 @@ export default function Bonuses() {
             <option value="breche">Brèche</option>
             <option value="exil">Exil</option>
             <option value="escale">Escale</option>
+            <option value="clonage">Clônage</option>
+            <option value="illusion">Illusion</option>
         </select><br/>
         <button type='submit' onClick={e => handleClick(e)}>set Bonuses</button>
     </form>

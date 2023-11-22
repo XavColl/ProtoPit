@@ -115,6 +115,14 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
         socket.emit('intracable', data)
     }
 
+    const illusion = (data) => {
+        socket.emit('start illusion', data)
+    }
+
+    const moveIllusion = (data) => {
+        socket.emit('move illusion', data)
+    }
+
     const moveBunker = (data) => {
         socket.emit('move bunker', data)
     }
@@ -176,6 +184,22 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
                 return <div className='Cell' onClick={() => placePlayer()}><div className="Playable"></div></div>
             }
 
+        if(cell.type === 'illusion'){
+            console.log('HEHOOOOO')
+            let b = false
+            game.illusions.forEach(ill => {
+                if (ill.x === cell.x && ill.y === cell.y){
+                    b = true
+                }
+            })
+            if(b){
+                return (
+                    <div className="Enemy">{bomb? <div className="Bomb"></div >:<></>}</div>
+                )
+            }
+            return <div className="Wall">{bomb? <div className="Bomb"></div >:<></>}</div>
+        }
+
         if(game.tp && cell.type === 'special' && game.players[game.turn%game.players.length] === user){
             return (
                 <div onClick={() => socket.emit('tp', {x: cell.x, y: cell.y, user})}  className="Special">
@@ -188,7 +212,7 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
             }
             if(clName !== 'Cell'){
                 return (
-                    <div className="Cell"></div>
+                    <div className="Cell">{ bomb? <div className="Bomb" ></div> : <></>}</div>
                 )
             }
             if(isMovable(cell) && !game.tp && cell.type==='orb'){
@@ -209,6 +233,16 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
         }
         switch(game.state){
             case 'normal':
+                if(isMovable(cell) && !game.tp && cell.type==='orb'){
+                    return <div className={clName} onClick={() => getOrb(isMovable(cell).direction)}><div className="Playable"><div className="Orb"></div></div></div>
+                }
+                if(isMovable(cell) && !game.tp){
+                    return <div className={clName} onClick={() => move(isMovable(cell).direction)}><div className="Playable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
+                )
+            case 'clonage':
                 if(isMovable(cell) && !game.tp && cell.type==='orb'){
                     return <div className={clName} onClick={() => getOrb(isMovable(cell).direction)}><div className="Playable"><div className="Orb"></div></div></div>
                 }
@@ -311,6 +345,20 @@ export default function Cell({cell ,game, place, isGoing, bunker}) {
                 }
                 return(
                     <div className={clName}>{bomb? <div className="Bomb"></div >: <></>}</div>
+                )
+            case 'start illusion': 
+            if(game.players[game.turn%game.players.length] === user && isMovable(cell) && !game.tp){
+                return <div className={clName} onClick={() => illusion({x: cell.x, y: cell.y, user})}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
+            }
+            return(
+                <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
+            )
+            case 'move illusion':
+                if(game.players[game.turn%game.players.length] === user && isMovable(cell) && !game.tp){
+                    return <div className={clName} onClick={() => moveIllusion({x: cell.x, y: cell.y, user})}><div className="Bonusable">{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div></div>
+                }
+                return(
+                    <div className={clName}>{bomb? <div className="Bomb"></div >: orb ? <div className="Orb"></div>: <></>}</div>
                 )
             default:
                 break;
