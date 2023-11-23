@@ -2,6 +2,7 @@
 
 import { socket } from "../../socket"
 
+
 export default function Cell({cell ,game, place, isGoing, bunker}) {
     const user = localStorage.getItem('sptuser')
     
