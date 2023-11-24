@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { socket } from "../../socket"
 import Board from "../components/Board"
 import { Link, useLoaderData } from "react-router-dom"
+import getUser from "../../lib/getUser"
 
 export default function Game() {
 
@@ -11,6 +12,7 @@ export default function Game() {
     const [win, setWin] = useState(false)
     const [lose, setLose] = useState(false)
     const [bunker, setBunker] = useState([])
+    const [enemies, setEnemy] = useState([])
     const data = useLoaderData()
 
     const user = localStorage.getItem('sptuser')
@@ -19,16 +21,54 @@ export default function Game() {
         socket.emit('active bonus', {bonus, user})
     }
 
+    const getBonuses = () => {
+        switch (data.player.bonus) {
+            case 'artificier':
+                return ['bombe', 'bunker']
+            case 'marcheur':
+                return ['teleportation', 'globe']
+            case 'fugitif':
+                return ['intracable', 'breche']
+            case 'architecte':
+                return ['chantier', 'renovation']
+            case 'banshee':
+                return ['invisibilite', 'transparence']
+            case 'voyageuse':
+                return ['exil', 'escale']
+            case 'illusioniste':
+                return ['mimetisme', 'clonage']
+            default:
+                return ['no', 'no']
+        }
+    }
+
+    const getEnemies = async (gm) => {
+        console.log('WEIIII')
+        const ids = gm.players.filter(p => p !== user)
+        const arr = []
+        ids.forEach(async id => {
+            const usr = await getUser(id)
+            arr.push(usr)
+        })
+        console.log(arr)
+        setEnemy(arr)
+    }
+
 
     useEffect(() => {
         socket.emit('game started', user)
     }, [])
 
+    useEffect(()  => {
+        if(game?.board && enemies.length === 0){
+            getEnemies(game)
+        }
+    }, [game])
+
     socket.on('place pieces', gm => {
         setGame(gm.game)
         if(gm.turn.turn === user) setPlace(true)
         else setPlace(false)
-        
     })
 
     socket.on('end game', data => {
@@ -38,7 +78,7 @@ export default function Game() {
         else setLose(true)
     })
 
-    socket.on('START', gm => {
+    socket.on('START', async gm => {
         console.log('blblblbl')
         setPlace(false)
         setIsGoing(true)
@@ -48,6 +88,7 @@ export default function Game() {
     socket.on('update game', gm => {
         setGame(gm)
         setBunker(gm.bunker)
+        console.log(enemies)
     })
 
     if(win){
@@ -62,18 +103,26 @@ export default function Game() {
 
     return <div className="Game">
         <Board game={game} place={place} isGoing={isGoing} bunker={bunker} />
-        {
+        <div className="side">
+            <div className="spells">
+            {
             (game.players[game.turn%game.players.length] === user 
             && game.bonus !== 'no' 
             && game.active[game.turn%game.players.length] > 0  
             && game.active[game.turn%game.players.length] < 4
             && game.state != 'clonage' ) ? 
             <> 
-                <button onClick={() => {activeBonus(data.player.bonus[0])}} >{data.player.bonus[0]}</button>
-                <button onClick={() => {activeBonus(data.player.bonus[1])}} >{data.player.bonus[1]}</button>
+                <button className="self"onClick={() => {activeBonus(getBonuses()[0])}} >{getBonuses()[0]}</button>
+                <button className="self"onClick={() => {activeBonus(getBonuses()[1])}} >{getBonuses()[1]}</button>
             </> :
-            game.state === 'clonage' ? <><button onClick={() => {activeBonus(game.clonage)}} >{game.clonage}</button></> :
+            game.state === 'clonage' && game.players[game.turn%game.players.length] === user ? <><button onClick={() => {activeBonus(game.clonage)}} >{game.clonage}</button></> :
             <></> 
         }
+            </div>
+            <div className="infos">
+                <h2>{data.player.pseudo} ( {data.player.bonus} ) {enemies.map(en =>{ return <span key={en.player._id}> against {en.player.pseudo} ( {en.player.bonus} )</span>})}</h2>
+            </div>
+        </div>
+        
     </div>
 }

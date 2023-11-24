@@ -5,6 +5,10 @@
     padding: 0;
     font-family: 'Josefin Sans', sans-serif;
 }
+body{
+    
+    background: rgba(0, 34, 255, 0.2);
+}
 h1{
     font-size: 2em;
 }
@@ -73,7 +77,39 @@ select{
 
 .Game{
     height: 100vh;
-    background: rgba(0, 34, 255, 0.2);
+}
+
+.side{
+    display: flex;
+    height: 200px;
+    width: 600px;
+    gap: 10px;
+}
+
+.spells{
+    align-content: center;
+    flex: 1;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    border: 3px solid black;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.infos{
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 3px solid black;
+    border-radius: 10px;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.self{
+    align-self: center;
 }
 
 .Board{
@@ -218,5 +254,8 @@ select{
     .Board{
         width: 400px;
         height: 400px;
+    }
+    .side{
+        width: 400px;
     }
 }
