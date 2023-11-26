@@ -13,7 +13,13 @@ export default function Game() {
     const [lose, setLose] = useState(false)
     const [bunker, setBunker] = useState([])
     const [enemies, setEnemy] = useState([])
+    const [randomMap, setRandomMap] = useState(0)
     const data = useLoaderData()
+
+    useEffect(() => {
+        const random = Math.floor(Math.random() * 7) + 1
+        setRandomMap(random)
+    }, [])
 
     const user = localStorage.getItem('sptuser')
 
@@ -102,7 +108,7 @@ export default function Game() {
     if (!game?.board) return <p>Loading ...</p>
 
     return <div className="Game">
-        <Board game={game} place={place} isGoing={isGoing} bunker={bunker} />
+        <Board game={game} place={place} isGoing={isGoing} bunker={bunker} randomMap={randomMap} />
         <div className="side">
             <div className="spells">
             {

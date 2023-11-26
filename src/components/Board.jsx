@@ -3,14 +3,15 @@ import Row from "./Row"
 
  
 
-export default function Board({game, place, isGoing, bunker}) {
+export default function Board({game, place, isGoing, bunker, randomMap}) {
 
    const board = game.board
+   const cl = `Board m${randomMap || ''}`
 
     
 
   return (
-    <div className="Board">
+    <div className={cl}>
         {board.map((row, i) => {
             return <Row key={i} row={row} game={game} place={place} isGoing={isGoing} bunker={bunker} />
         })}
