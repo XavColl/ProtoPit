@@ -5,7 +5,7 @@ export default function GameChoices() {
 
   const user = localStorage.getItem('sptuser')
 
-  const [bonus, setBonus] = useState('start')
+  const [bonus, setBonus] = useState('turns')
   const [pieces, setPieces] = useState(1)
   const [squares, setSquares] = useState(15)
   const [players, setPlayers] = useState(2)
@@ -28,8 +28,8 @@ export default function GameChoices() {
             turns : 2 orbs pop each 3 turns
             no
           */}
-          <option value='start'>Start</option>
           <option value='turns'>Turns</option>
+          <option value='start'>Start</option>
           <option value='no'>No</option>
         </select>
         <br />
